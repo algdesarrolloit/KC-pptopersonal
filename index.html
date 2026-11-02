@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Mi Presupuesto Personal</title>
+<title>Hucha, tu organizador financiero</title>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -106,8 +106,9 @@
   
   .header-actions .credit {
     color: #666;
-    font-size: 11px;
+    font-size: 13px;
     font-style: italic;
+    font-weight: 500;
   }
 
   .cards-grid {
@@ -120,6 +121,10 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 110px;
   }
   
   .card:hover {
@@ -132,8 +137,24 @@
   .card.balance { background: linear-gradient(135deg, #34D399, #10B981); color: white; }
   .card.credit { background: linear-gradient(135deg, #A78BFA, #8B83FF); color: white; }
   
+  .card-left {
+    flex: 1;
+  }
+  
+  .card-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-left: 15px;
+  }
+  
   .card h3 { font-size: 13px; opacity: 0.9; margin-bottom: 8px; font-weight: 600; }
-  .card .amount { font-size: 26px; font-weight: 700; }
+  .card .amount { 
+    font-size: 42px; 
+    font-weight: 800; 
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
   .card .label { font-size: 11px; opacity: 0.85; margin-top: 5px; }
 
   .main-grid {
@@ -148,12 +169,14 @@
     .cards-grid { grid-template-columns: 1fr 1fr; }
     body { padding: 10px; }
     header h1 { font-size: 20px; }
+    .card .amount { font-size: 36px; }
   }
   
   @media (max-width: 480px) {
     .cards-grid { grid-template-columns: 1fr; }
     header h1 { font-size: 18px; }
     .header-actions button { padding: 8px 12px; font-size: 12px; }
+    .card .amount { font-size: 32px; }
   }
 
   .panel {
@@ -226,7 +249,6 @@
   
   .btn-primary:hover { transform: translateY(-2px); }
 
-  /*  BOTÓN DE CAPTURA DE IMAGEN */
   .image-capture-section {
     margin-bottom: 12px;
   }
@@ -324,7 +346,6 @@
     gap: 4px;
   }
 
-  /* 🔍 MODAL VISOR DE IMAGEN */
   .image-modal {
     display: none;
     position: fixed;
@@ -384,13 +405,38 @@
   
   .legend-item {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 6px 0; border-bottom: 1px solid #f0f0f0;
+    padding: 8px 0; border-bottom: 1px solid #f0f0f0;
     font-size: 13px;
+    gap: 10px;
+  }
+  
+  .legend-item-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+  
+  .legend-item-amount {
+    font-weight: 700;
+    color: #2d2d2d;
+    font-size: 13px;
+    min-width: 70px;
+    text-align: right;
+  }
+  
+  .legend-item-pct {
+    font-weight: 600;
+    color: #666;
+    font-size: 12px;
+    min-width: 45px;
+    text-align: right;
   }
   
   .legend-item .dot {
     width: 10px; height: 10px; border-radius: 50%;
-    display: inline-block; margin-right: 8px;
+    display: inline-block;
+    flex-shrink: 0;
   }
 
   .table-container {
@@ -444,7 +490,6 @@
     font-size: 14px;
   }
   
-  /* Thumbnail en tabla */
   .thumb-img {
     width: 40px;
     height: 40px;
@@ -471,7 +516,7 @@
   <header>
     <div class="header-title">
       <img src="hucha.ico" alt="Logo">
-      <h1>Mi Presupuesto Personal</h1>
+      <h1>Hucha, tu organizador financiero</h1>
     </div>
     <div class="header-actions">
       <div class="buttons-row">
@@ -481,7 +526,7 @@
         <button onclick="exportToPDF()">
           <span class="icon-pdf">PDF</span> Exportar PDF
         </button>
-        <button onclick="clearAll()">️ Limpiar</button>
+        <button onclick="clearAll()">🗑️ Limpiar</button>
       </div>
       <div class="credit">Desarrollado por Ing. Kevin Carta</div>
     </div>
@@ -489,24 +534,40 @@
 
   <div class="cards-grid">
     <div class="card income">
-      <h3>Ingresos</h3>
-      <div class="amount" id="totalIncome">$0</div>
-      <div class="label">Total acumulado</div>
+      <div class="card-left">
+        <h3>Ingresos</h3>
+        <div class="label">Total acumulado</div>
+      </div>
+      <div class="card-right">
+        <div class="amount" id="totalIncome">$0</div>
+      </div>
     </div>
     <div class="card expense">
-      <h3>Egresos</h3>
-      <div class="amount" id="totalExpense">$0</div>
-      <div class="label">Total acumulado</div>
+      <div class="card-left">
+        <h3>Egresos</h3>
+        <div class="label">Total acumulado</div>
+      </div>
+      <div class="card-right">
+        <div class="amount" id="totalExpense">$0</div>
+      </div>
     </div>
     <div class="card balance">
-      <h3>Balance</h3>
-      <div class="amount" id="totalBalance">$0</div>
-      <div class="label">Disponible</div>
+      <div class="card-left">
+        <h3>Balance</h3>
+        <div class="label">Disponible</div>
+      </div>
+      <div class="card-right">
+        <div class="amount" id="totalBalance">$0</div>
+      </div>
     </div>
     <div class="card credit">
-      <h3>Salario</h3>
-      <div class="amount" id="salaryDisplay">$0</div>
-      <div class="label">Mensual fijo</div>
+      <div class="card-left">
+        <h3>Salario</h3>
+        <div class="label">Mensual fijo</div>
+      </div>
+      <div class="card-right">
+        <div class="amount" id="salaryDisplay">$0</div>
+      </div>
     </div>
   </div>
 
@@ -552,7 +613,6 @@
         <input type="number" id="amountInput" placeholder="0.00" step="0.01">
       </div>
       
-      <!-- 📷 SECCIÓN DE CAPTURA DE IMAGEN -->
       <div class="image-capture-section">
         <label>Evidencia fotográfica (opcional)</label>
         <div class="image-capture-wrapper">
@@ -610,7 +670,6 @@
   </div>
 </div>
 
-<!-- 🔍 MODAL VISOR DE IMAGEN AMPLIADA -->
 <div class="image-modal" id="imageModal" onclick="closeImageModal()">
   <button class="image-modal-close" onclick="closeImageModal()">✕</button>
   <img id="modalImage" src="" alt="Imagen ampliada">
@@ -620,7 +679,7 @@
 let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
 let salary = parseFloat(localStorage.getItem('salary') || '0');
 let currentType = 'income';
-let currentImageData = null; // Almacena la imagen en base64
+let currentImageData = null;
 
 document.getElementById('dateInput').valueAsDate = new Date();
 
@@ -643,20 +702,15 @@ function saveSalary() {
   toggleSalary();
 }
 
-// ============================================
-// 📷 CAPTURA Y COMPRESIÓN DE IMAGEN
-// ============================================
 function handleImageCapture(event) {
   const file = event.target.files[0];
   if (!file) return;
   
-  // Validar que sea imagen
   if (!file.type.startsWith('image/')) {
     alert('Por favor selecciona una imagen válida');
     return;
   }
   
-  // Validar tamaño máximo (5MB antes de comprimir)
   if (file.size > 5 * 1024 * 1024) {
     alert('La imagen es muy grande. Máximo 5MB.');
     return;
@@ -666,11 +720,9 @@ function handleImageCapture(event) {
   reader.onload = function(e) {
     const img = new Image();
     img.onload = function() {
-      // Comprimir la imagen
       const compressed = compressImage(img, 800, 0.7);
       currentImageData = compressed;
       
-      // Mostrar preview
       document.getElementById('imagePreview').src = compressed;
       document.getElementById('imagePreviewContainer').classList.add('active');
       document.getElementById('btnRemoveImage').style.display = 'block';
@@ -687,7 +739,6 @@ function compressImage(img, maxWidth, quality) {
   let width = img.width;
   let height = img.height;
   
-  // Redimensionar manteniendo aspect ratio
   if (width > maxWidth) {
     height = (height * maxWidth) / width;
     width = maxWidth;
@@ -699,7 +750,6 @@ function compressImage(img, maxWidth, quality) {
   const ctx = canvas.getContext('2d');
   ctx.drawImage(img, 0, 0, width, height);
   
-  // Comprimir a JPEG
   return canvas.toDataURL('image/jpeg', quality);
 }
 
@@ -712,9 +762,6 @@ function removeImage() {
   document.getElementById('btnCamera').innerHTML = '📷 Tomar foto / Seleccionar';
 }
 
-// ============================================
-// 🔍 MODAL DE IMAGEN
-// ============================================
 function openImageModal(src) {
   document.getElementById('modalImage').src = src;
   document.getElementById('imageModal').classList.add('active');
@@ -738,11 +785,10 @@ function addTransaction() {
   transactions.push({
     id: Date.now(),
     date, type: currentType, desc, category, amount,
-    image: currentImageData // Guardar imagen (puede ser null)
+    image: currentImageData
   });
   save();
   
-  // Limpiar formulario
   document.getElementById('descInput').value = '';
   document.getElementById('amountInput').value = '';
   removeImage();
@@ -857,8 +903,12 @@ function renderChart() {
 
     legend.innerHTML += `
       <div class="legend-item">
-        <div><span class="dot" style="background:${colors[i % colors.length]}"></span>${cat}</div>
-        <div style="font-weight:600">${(pct * 100).toFixed(0)}%</div>
+        <div class="legend-item-left">
+          <span class="dot" style="background:${colors[i % colors.length]}"></span>
+          <span>${cat}</span>
+        </div>
+        <div class="legend-item-amount">${formatMoney(val)}</div>
+        <div class="legend-item-pct">${(pct * 100).toFixed(0)}%</div>
       </div>
     `;
   });
@@ -866,9 +916,6 @@ function renderChart() {
   document.getElementById('topCategoryPct').textContent = ((entries[0][1] / total) * 100).toFixed(0) + '%';
 }
 
-// ============================================
-// 📊 EXPORTAR EXCEL CON IMÁGENES
-// ============================================
 async function exportToExcel() {
   if (transactions.length === 0) {
     alert('No hay datos para exportar');
@@ -876,7 +923,7 @@ async function exportToExcel() {
   }
 
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = 'Mi Presupuesto Personal - Ing. Kevin Carta';
+  workbook.creator = 'Hucha - Ing. Kevin Carta';
   workbook.created = new Date();
 
   const sorted = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -908,14 +955,11 @@ async function exportToExcel() {
     right: { style: 'thin', color: { argb: 'FF' + colors.border } }
   };
 
-  // ==========================================
-  // HOJA 1: MOVIMIENTOS (con imágenes)
-  // ==========================================
   const ws = workbook.addWorksheet('Movimientos');
 
   ws.mergeCells('A1:F1');
   const titleCell = ws.getCell('A1');
-  titleCell.value = 'MI PRESUPUESTO PERSONAL';
+  titleCell.value = 'HUCHA - TU ORGANIZADOR FINANCIERO';
   titleCell.font = { name: 'Calibri', size: 18, bold: true, color: { argb: 'FF' + colors.titleText } };
   titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + colors.titleBg } };
   titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -940,7 +984,6 @@ async function exportToExcel() {
   });
   ws.getRow(5).height = 25;
 
-  // Insertar imágenes y datos
   sorted.forEach((t, idx) => {
     const row = ws.getRow(6 + idx);
     const isIncome = t.type === 'income';
@@ -974,7 +1017,6 @@ async function exportToExcel() {
     
     ws.getRow(6 + idx).height = 22;
 
-    // Insertar imagen si existe
     if (t.image) {
       try {
         const imageId = workbook.addImage({
@@ -992,7 +1034,6 @@ async function exportToExcel() {
     }
   });
 
-  // Sección de resumen
   const summaryStartRow = 6 + sorted.length + 2;
   
   ws.mergeCells(`A${summaryStartRow}:F${summaryStartRow}`);
@@ -1050,9 +1091,6 @@ async function exportToExcel() {
   ws.getColumn(5).width = 14;
   ws.getColumn(6).width = 12;
 
-  // ==========================================
-  // HOJA 2: POR CATEGORÍA
-  // ==========================================
   const wsCat = workbook.addWorksheet('Por Categoría');
 
   const byCategory = {};
@@ -1109,9 +1147,6 @@ async function exportToExcel() {
   wsCat.getColumn(2).width = 16;
   wsCat.getColumn(3).width = 14;
 
-  // ==========================================
-  // HOJA 3: RESUMEN MENSUAL
-  // ==========================================
   const wsMonth = workbook.addWorksheet('Resumen Mensual');
 
   const byMonth = {};
@@ -1179,14 +1214,11 @@ async function exportToExcel() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `presupuesto_${new Date().toISOString().slice(0,10)}.xlsx`;
+  a.download = `hucha_presupuesto_${new Date().toISOString().slice(0,10)}.xlsx`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
-// ============================================
-// 📄 EXPORTAR PDF CON IMÁGENES
-// ============================================
 function exportToPDF() {
   if (transactions.length === 0) {
     alert('No hay datos para exportar');
@@ -1205,14 +1237,13 @@ function exportToPDF() {
   const expenseColor = [192, 57, 43];
   const lightGray = [245, 246, 250];
 
-  // ---- ENCABEZADO ----
   doc.setFillColor(...primaryColor);
   doc.rect(0, 0, 210, 35, 'F');
 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20);
   doc.setFont('helvetica', 'bold');
-  doc.text('MI PRESUPUESTO PERSONAL', 105, 15, { align: 'center' });
+  doc.text('HUCHA - TU ORGANIZADOR FINANCIERO', 105, 15, { align: 'center' });
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'italic');
@@ -1222,7 +1253,6 @@ function exportToPDF() {
   doc.setFont('helvetica', 'normal');
   doc.text(`Generado: ${new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}`, 105, 30, { align: 'center' });
 
-  // ---- TARJETAS DE RESUMEN ----
   let yPos = 45;
   const cardWidth = 46;
   const cardHeight = 22;
@@ -1248,7 +1278,6 @@ function exportToPDF() {
     doc.text(card.value, x + cardWidth / 2, yPos + 17, { align: 'center' });
   });
 
-  // ---- TABLA DE MOVIMIENTOS ----
   yPos = 78;
   doc.setTextColor(...primaryColor);
   doc.setFontSize(13);
@@ -1325,7 +1354,6 @@ function exportToPDF() {
     }
   });
 
-  // ---- SECCIÓN DE EVIDENCIAS FOTOGRÁFICAS ----
   const transactionsWithImage = sorted.filter(t => t.image);
   
   if (transactionsWithImage.length > 0) {
@@ -1362,12 +1390,10 @@ function exportToPDF() {
       try {
         doc.addImage(t.image, 'JPEG', x, imgY, imgWidth, imgHeight);
         
-        // Borde alrededor de la imagen
         doc.setDrawColor(200, 200, 200);
         doc.setLineWidth(0.3);
         doc.rect(x, imgY, imgWidth, imgHeight);
         
-        // Información debajo de la imagen
         doc.setTextColor(...primaryColor);
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
@@ -1394,7 +1420,6 @@ function exportToPDF() {
     });
   }
 
-  // ---- PIE DE PÁGINA ----
   const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 270;
   if (finalY < 270) {
     doc.setDrawColor(...primaryColor);
@@ -1404,10 +1429,10 @@ function exportToPDF() {
     doc.setFontSize(8);
     doc.setFont('helvetica', 'italic');
     doc.text(`Total de registros: ${transactions.length} | Con evidencia: ${transactionsWithImage.length}`, 14, finalY + 6);
-    doc.text('Mi Presupuesto Personal - Ing. Kevin Carta', 196, finalY + 6, { align: 'right' });
+    doc.text('Hucha - Ing. Kevin Carta', 196, finalY + 6, { align: 'right' });
   }
 
-  doc.save(`presupuesto_${new Date().toISOString().slice(0,10)}.pdf`);
+  doc.save(`hucha_presupuesto_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
 updateUI();
