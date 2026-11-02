@@ -2,7 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Hucha">
 <title>Hucha, tu organizador financiero</title>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -15,28 +18,38 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
   
+  html {
+    height: 100dvh;
+    overflow: hidden;
+  }
+  
   body {
     background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 50%, #faf8f5 100%);
-    min-height: 100vh;
-    padding: 15px;
+    min-height: 100dvh;
+    height: 100dvh;
+    padding: 12px;
     color: #333;
+    overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
   }
   
   .container { 
     max-width: 1200px; 
     margin: 0 auto;
     width: 100%;
+    padding-bottom: 20px;
   }
   
   header {
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    margin-bottom: 20px; 
+    margin-bottom: 16px; 
     color: #4a4a4a;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
   }
   
   .header-title {
@@ -48,8 +61,8 @@
   }
   
   .header-title img {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
     background: transparent;
     box-shadow: none;
@@ -57,7 +70,7 @@
   }
   
   header h1 { 
-    font-size: 22px; 
+    font-size: 20px; 
     font-weight: 700; 
     color: #2d2d2d;
     line-height: 1.2;
@@ -140,21 +153,22 @@
   .cards-grid {
     display: grid; 
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px; 
-    margin-bottom: 20px;
+    gap: 10px; 
+    margin-bottom: 16px;
   }
   
   .card {
     background: white; 
     border-radius: 16px; 
-    padding: 16px;
+    padding: 14px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid rgba(0,0,0,0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 90px;
+    min-height: 85px;
+    overflow: hidden;
   }
   
   .card:hover {
@@ -176,26 +190,28 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-left: 10px;
+    padding-left: 8px;
     flex-shrink: 0;
+    min-width: 0;
   }
   
   .card h3 { 
     font-size: 12px; 
     opacity: 0.9; 
-    margin-bottom: 6px; 
+    margin-bottom: 5px; 
     font-weight: 600;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   
   .card .amount { 
-    font-size: 32px; 
+    font-size: clamp(18px, 5vw, 32px);
     font-weight: 800; 
     line-height: 1;
     text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
   
   .card .label { 
@@ -208,14 +224,14 @@
   .main-grid {
     display: grid; 
     grid-template-columns: 1fr 1fr; 
-    gap: 15px; 
-    margin-bottom: 15px;
+    gap: 12px; 
+    margin-bottom: 12px;
   }
 
   .panel {
     background: white; 
     border-radius: 16px; 
-    padding: 18px;
+    padding: 16px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     border: 1px solid rgba(0,0,0,0.05);
     overflow: hidden;
@@ -223,7 +239,7 @@
   
   .panel h2 {
     font-size: 16px; 
-    margin-bottom: 15px; 
+    margin-bottom: 14px; 
     color: #2d2d2d;
     display: flex; 
     justify-content: space-between; 
@@ -251,21 +267,24 @@
   
   .form-group label {
     display: block; 
-    font-size: 11px; 
+    font-size: 12px; 
     color: #666;
     margin-bottom: 4px; 
     font-weight: 600;
   }
   
+  /* 🔑 FIX CRÍTICO: font-size 16px mínimo para evitar zoom en iOS */
   .form-group input, .form-group select {
     width: 100%; 
-    padding: 9px 10px; 
+    padding: 10px 12px; 
     border: 1.5px solid #e5e5e5;
     border-radius: 8px; 
-    font-size: 13px; 
+    font-size: 16px; /* iOS no hace zoom con 16px */
     transition: border 0.3s;
     outline: none;
     background: #fafafa;
+    -webkit-appearance: none;
+    appearance: none;
   }
   
   .form-group input:focus, .form-group select:focus { 
@@ -281,14 +300,14 @@
   
   .type-toggle button {
     flex: 1; 
-    padding: 9px; 
+    padding: 10px; 
     border: 1.5px solid #e5e5e5;
     background: white; 
     border-radius: 8px; 
     cursor: pointer;
     font-weight: 600; 
     transition: all 0.3s;
-    font-size: 12px;
+    font-size: 14px;
   }
   
   .type-toggle button.active.income-btn {
@@ -305,12 +324,12 @@
 
   .btn-primary {
     width: 100%; 
-    padding: 11px;
+    padding: 12px;
     background: linear-gradient(135deg, #6C63FF, #8B83FF);
     color: white; 
     border: none; 
     border-radius: 8px;
-    font-size: 13px; 
+    font-size: 16px; /* Evita zoom en iOS */
     font-weight: 600; 
     cursor: pointer;
     transition: transform 0.2s;
@@ -325,7 +344,7 @@
   
   .image-capture-section label {
     display: block; 
-    font-size: 11px; 
+    font-size: 12px; 
     color: #666;
     margin-bottom: 4px; 
     font-weight: 600;
@@ -339,12 +358,12 @@
   
   .btn-camera {
     flex: 1;
-    padding: 9px 10px;
+    padding: 10px 12px;
     background: linear-gradient(135deg, #FF9A56, #FF6B6B);
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -366,12 +385,12 @@
   }
   
   .btn-remove-image {
-    padding: 9px 10px;
+    padding: 10px 12px;
     background: #fee2e2;
     color: #dc2626;
     border: none;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
@@ -411,7 +430,7 @@
   }
   
   .image-preview-label {
-    font-size: 9px;
+    font-size: 10px;
     color: #10B981;
     font-weight: 600;
     margin-top: 3px;
@@ -547,7 +566,7 @@
   .table-container {
     background: white; 
     border-radius: 16px; 
-    padding: 18px;
+    padding: 16px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     overflow-x: auto;
     border: 1px solid rgba(0,0,0,0.05);
@@ -572,7 +591,7 @@
   table { 
     width: 100%; 
     border-collapse: collapse; 
-    min-width: 500px;
+    min-width: 550px;
   }
   
   th {
@@ -589,13 +608,19 @@
   td {
     padding: 10px 6px; 
     border-bottom: 1px solid #f5f5f5;
-    font-size: 12px;
+    font-size: 13px;
+  }
+  
+  /* 🔑 FIX: Fecha en una sola línea */
+  td:first-child {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
   
   .badge {
     padding: 3px 7px; 
     border-radius: 12px;
-    font-size: 10px; 
+    font-size: 11px; 
     font-weight: 600;
     display: inline-block;
     white-space: nowrap;
@@ -604,8 +629,8 @@
   .badge.income { background: #EDE9FE; color: #6C63FF; }
   .badge.expense { background: #FCE7F3; color: #EC4899; }
   
-  .amount-pos { color: #10B981; font-weight: 600; }
-  .amount-neg { color: #EC4899; font-weight: 600; }
+  .amount-pos { color: #10B981; font-weight: 600; white-space: nowrap; }
+  .amount-neg { color: #EC4899; font-weight: 600; white-space: nowrap; }
   
   .btn-delete {
     background: #FEE2E2; 
@@ -614,7 +639,7 @@
     padding: 4px 7px; 
     border-radius: 5px; 
     cursor: pointer;
-    font-size: 10px;
+    font-size: 11px;
     white-space: nowrap;
   }
   
@@ -681,30 +706,26 @@
       flex: 1;
       justify-content: center;
       font-size: 11px;
-      padding: 7px 8px;
+      padding: 8px 6px;
     }
     
     .cards-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
     
     .card {
-      padding: 14px;
+      padding: 12px;
       min-height: 80px;
-    }
-    
-    .card .amount {
-      font-size: 26px;
     }
     
     .main-grid {
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 10px;
     }
     
     .panel {
-      padding: 15px;
+      padding: 14px;
     }
     
     .chart-container {
@@ -727,7 +748,9 @@
      ============================================ */
   @media (max-width: 900px) and (orientation: landscape) {
     body {
-      padding: 12px;
+      padding: 10px;
+      height: auto;
+      min-height: 100dvh;
     }
     
     header {
@@ -764,10 +787,6 @@
       min-height: 70px;
     }
     
-    .card .amount {
-      font-size: 24px;
-    }
-    
     .main-grid {
       grid-template-columns: 1fr 1fr;
       gap: 12px;
@@ -775,15 +794,11 @@
   }
 
   /* ============================================
-     RESPONSIVE - PANTALLAS MUY PEQUEÑAS
+     PANTALLAS MUY PEQUEÑAS
      ============================================ */
   @media (max-width: 380px) {
-    .cards-grid {
-      grid-template-columns: 1fr;
-    }
-    
     .card .amount {
-      font-size: 28px;
+      font-size: clamp(16px, 4.5vw, 24px);
     }
     
     header h1 {
@@ -792,7 +807,7 @@
     
     .header-actions button {
       font-size: 10px;
-      padding: 6px 7px;
+      padding: 7px 5px;
     }
   }
 </style>
