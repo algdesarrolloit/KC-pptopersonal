@@ -19,20 +19,16 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
   
   html {
-    height: 100dvh;
-    overflow: hidden;
+    overflow-x: hidden;
   }
   
   body {
     background: linear-gradient(135deg, #faf8f5 0%, #f5f0e8 50%, #faf8f5 100%);
-    min-height: 100dvh;
-    height: 100dvh;
+    min-height: 100vh;
     padding: 12px;
     color: #333;
-    overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    position: relative;
   }
   
   .container { 
@@ -273,13 +269,12 @@
     font-weight: 600;
   }
   
-  /* 🔑 FIX CRÍTICO: font-size 16px mínimo para evitar zoom en iOS */
   .form-group input, .form-group select {
     width: 100%; 
     padding: 10px 12px; 
     border: 1.5px solid #e5e5e5;
     border-radius: 8px; 
-    font-size: 16px; /* iOS no hace zoom con 16px */
+    font-size: 16px;
     transition: border 0.3s;
     outline: none;
     background: #fafafa;
@@ -329,7 +324,7 @@
     color: white; 
     border: none; 
     border-radius: 8px;
-    font-size: 16px; /* Evita zoom en iOS */
+    font-size: 16px;
     font-weight: 600; 
     cursor: pointer;
     transition: transform 0.2s;
@@ -611,7 +606,6 @@
     font-size: 13px;
   }
   
-  /* 🔑 FIX: Fecha en una sola línea */
   td:first-child {
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
@@ -670,9 +664,6 @@
     font-size: 16px;
   }
 
-  /* ============================================
-     RESPONSIVE - MÓVIL VERTICAL
-     ============================================ */
   @media (max-width: 768px) {
     body {
       padding: 10px;
@@ -743,14 +734,9 @@
     }
   }
 
-  /* ============================================
-     RESPONSIVE - MÓVIL HORIZONTAL
-     ============================================ */
   @media (max-width: 900px) and (orientation: landscape) {
     body {
       padding: 10px;
-      height: auto;
-      min-height: 100dvh;
     }
     
     header {
@@ -793,9 +779,6 @@
     }
   }
 
-  /* ============================================
-     PANTALLAS MUY PEQUEÑAS
-     ============================================ */
   @media (max-width: 380px) {
     .card .amount {
       font-size: clamp(16px, 4.5vw, 24px);
