@@ -46,18 +46,26 @@
   .month-select { flex: 1; padding: 10px 12px; border: 1.5px solid #e5e5e5; border-radius: 10px; font-size: 14px; background: white; color: var(--text); outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
   .month-select:focus { border-color: var(--primary); }
 
-  /* CARDS GRID */
+  /* CARDS GRID - REDISEÑADO */
   .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-  .card { background: var(--card-bg); border-radius: 16px; padding: 14px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; min-height: 85px; overflow: hidden; transition: transform 0.3s ease; }
+  .card { 
+    background: var(--card-bg); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); 
+    border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; align-items: center; 
+    min-height: 90px; overflow: hidden; transition: transform 0.3s ease; text-align: center;
+  }
   .card:hover { transform: translateY(-3px); }
   .card.income { background: linear-gradient(135deg, #A78BFA, #8B83FF); color: white; }
   .card.expense { background: linear-gradient(135deg, #F472B6, #EC4899); color: white; }
   .card.balance { background: linear-gradient(135deg, #34D399, #10B981); color: white; }
-  .card-left { flex: 1; min-width: 0; }
-  .card-right { display: flex; align-items: center; justify-content: flex-end; padding-left: 8px; flex-shrink: 0; }
-  .card h3 { font-size: 12px; opacity: 0.9; margin-bottom: 5px; font-weight: 600; white-space: nowrap; }
-  .card .amount { font-size: clamp(18px, 4vw, 28px); font-weight: 800; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-  .card .label { font-size: 10px; opacity: 0.85; margin-top: 4px; white-space: nowrap; }
+  
+  .card h3 { 
+    font-size: 13px; opacity: 0.95; margin-bottom: 8px; font-weight: 700; white-space: nowrap; 
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .card .amount { 
+    font-size: clamp(22px, 5vw, 32px); font-weight: 800; line-height: 1; 
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap; width: 100%;
+  }
 
   /* DASHBOARD & PROJECTION */
   .dashboard-section { margin-bottom: 16px; }
@@ -159,8 +167,8 @@
     .header-actions .buttons-row { width: 100%; justify-content: space-between; }
     .header-actions button { flex: 1; justify-content: center; font-size: 11px; padding: 8px 6px; }
     .cards-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .card { padding: 10px; min-height: 75px; }
-    .card .amount { font-size: clamp(14px, 3.5vw, 22px); }
+    .card { padding: 12px; min-height: 80px; }
+    .card .amount { font-size: clamp(16px, 4vw, 24px); }
     .kpi-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .kpi-card { padding: 8px; } .kpi-value { font-size: 14px; }
     .main-grid { grid-template-columns: 1fr; gap: 10px; }
@@ -212,11 +220,20 @@
     </select>
   </div>
 
-  <!-- TARJETAS PRINCIPALES (Ahora 3: Ingreso, Egreso, Balance) -->
+  <!-- TARJETAS PRINCIPALES (Rediseñadas: Título arriba centrado, Monto abajo centrado grande) -->
   <div class="cards-grid">
-    <div class="card income"><div class="card-left"><h3>Ingresos</h3><div class="label" id="incomeLabel">Total acumulado</div></div><div class="card-right"><div class="amount" id="totalIncome">$0</div></div></div>
-    <div class="card expense"><div class="card-left"><h3>Egresos</h3><div class="label" id="expenseLabel">Total acumulado</div></div><div class="card-right"><div class="amount" id="totalExpense">$0</div></div></div>
-    <div class="card balance"><div class="card-left"><h3>Balance</h3><div class="label" id="balanceLabel">Disponible</div></div><div class="card-right"><div class="amount" id="totalBalance">$0</div></div></div>
+    <div class="card income">
+      <h3>Ingresos</h3>
+      <div class="amount" id="totalIncome">$0</div>
+    </div>
+    <div class="card expense">
+      <h3>Egresos</h3>
+      <div class="amount" id="totalExpense">$0</div>
+    </div>
+    <div class="card balance">
+      <h3>Balance</h3>
+      <div class="amount" id="totalBalance">$0</div>
+    </div>
   </div>
 
   <!-- DASHBOARD DE EVOLUCIÓN Y PROYECCIÓN -->
@@ -378,13 +395,7 @@ function updateDashboardView() {
     const [y, mo] = selectedMonth.split('-');
     const dateObj = new Date(y, mo-1, 1);
     const label = dateObj.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-    document.getElementById('incomeLabel').textContent = label;
-    document.getElementById('expenseLabel').textContent = label;
-    document.getElementById('balanceLabel').textContent = label;
-  } else {
-    document.getElementById('incomeLabel').textContent = 'Total acumulado';
-    document.getElementById('expenseLabel').textContent = 'Total acumulado';
-    document.getElementById('balanceLabel').textContent = 'Disponible';
+    // Ya no usamos labels debajo, pero mantenemos la lógica de filtro
   }
 
   // Calcular totales filtrados
